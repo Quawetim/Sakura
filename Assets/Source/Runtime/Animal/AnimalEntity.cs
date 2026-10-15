@@ -102,6 +102,7 @@ namespace Sakura.Zoo.Animal
             }
 
             Die();
+            _labelManager.Show(animal);
         }
 
         public bool IsDead => _isDead;
