@@ -9,7 +9,7 @@ using Random = UnityEngine.Random;
 
 namespace Sakura.Zoo.Manager
 {
-    public sealed class AnimalManager : ITickable, IDisposable
+    public sealed class AnimalManager : IAnimalManager, ITickable, IDisposable
     {
         private readonly Settings _settings;
         private readonly SceneSettings _sceneSettings;
