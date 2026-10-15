@@ -4,21 +4,31 @@ using Zenject;
 
 namespace Sakura.Zoo.Animal
 {
-    public class AnimalEntity : MonoBehaviour, ITransformProvider
+    [RequireComponent(typeof(Rigidbody))]
+    public class AnimalEntity : MonoBehaviour, ITransformProvider, IRigidbodyProvider
     {
+        [SerializeField] private Rigidbody _rigidbody;
+
         private IAnimalBehaviour _behaviour;
 
         [Inject]
         private void Construct(IAnimalBehaviour behaviour)
         {
             _behaviour = behaviour;
+
+            if (!_rigidbody)
+            {
+                _rigidbody = GetComponent<Rigidbody>();
+            }
         }
 
-        private void Update()
+        private void Awake()
         {
-            _behaviour.Update(Time.deltaTime);
+            _behaviour.Start(destroyCancellationToken);
         }
 
         public Transform Transform => (this && transform) ? transform : null;
+
+        public Rigidbody Rigidbody => _rigidbody;
     }
 }

@@ -8,6 +8,7 @@ namespace Sakura.Zoo.Animal.Behaviour
         {
             BindAnimal();
             BindBehaviour();
+            BindMovementController();
         }
 
         private void BindAnimal()
@@ -19,5 +20,7 @@ namespace Sakura.Zoo.Animal.Behaviour
         }
 
         protected abstract void BindBehaviour();
+
+        protected abstract void BindMovementController();
     }
 }

@@ -1,32 +1,20 @@
-using UnityEngine;
+using Sakura.Zoo.Animal.Movement;
+using System.Threading;
 
 namespace Sakura.Zoo.Animal.Behaviour
 {
     public abstract class AnimalBehaviour : IAnimalBehaviour
     {
-        private readonly ITransformProvider _transformProvider;
+        private readonly IMovementController _movementController;
 
-        protected AnimalBehaviour(ITransformProvider transformProvider)
+        protected AnimalBehaviour(IMovementController movementController)
         {
-            _transformProvider = transformProvider;
+            _movementController = movementController;
         }
 
-        public abstract void Update(float deltaTime);
-
-        protected void SetPosition(Vector3 position)
+        public virtual void Start(CancellationToken ct)
         {
-            if (!_transformProvider?.Transform)
-                return;
-
-            _transformProvider.Transform.position = position;
-        }
-
-        protected void SetRotation(Quaternion rotation)
-        {
-            if (!_transformProvider?.Transform)
-                return;
-
-            _transformProvider.Transform.rotation = rotation;
+            _movementController.Start(ct);
         }
     }
 }
