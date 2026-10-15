@@ -69,17 +69,17 @@ namespace Sakura.Zoo.Animal.Behaviour.Prey
 
         private async UniTask Jump(Transform transform, CancellationToken ct)
         {
-            if (_screenBoundsChecker.IsInBounds(transform.localPosition))
+            if (_screenBoundsChecker.IsInBounds(transform.position))
             {
                 var angle = Random.Range(0f, 360f);
-                transform.localRotation = Quaternion.Euler(0f, angle, 0f);
+                transform.rotation = Quaternion.Euler(0f, angle, 0f);
             }
             else
             {
-                transform.forward = (Vector3.zero - transform.localPosition).normalized;
+                transform.forward = (Vector3.zero - transform.position).normalized;
             }
 
-            var startPosition = transform.localPosition;
+            var startPosition = transform.position;
             var targetPosition = startPosition + (_params.Distance * transform.forward);
 
             var currentTime = 0f;
@@ -91,12 +91,12 @@ namespace Sakura.Zoo.Animal.Behaviour.Prey
                 var height = _params.GetHeight(progress);
 
                 var position = Vector3.Lerp(startPosition, targetPosition, progress) + (height * transform.up);
-                transform.localPosition = position;
+                transform.position = position;
 
                 await UniTask.NextFrame(ct);
             }
 
-            transform.localPosition = targetPosition;
+            transform.position = targetPosition;
         }
 
         private void JumpRb()

@@ -47,6 +47,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Zenject::Zenject.SceneContext
   _scriptableObjectInstallers:
   - {fileID: 11400000, guid: cb3e5ccd4bf054947b53d89e2c32e9cf, type: 2}
+  - {fileID: 11400000, guid: 5c6a86ac4b949984b838265838733f88, type: 2}
   _monoInstallers:
   - {fileID: 7021868907264675819}
   _installerPrefabs: []
@@ -79,4 +80,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d6d621cd00d8b5540af645f7e8258988, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Sakura.Zoo::Sakura.Zoo.SceneInstaller
-  _spawnPoints: []
+  _animalManagerSettings:
+    _spawnPoints: []
+    _animalsParent: {fileID: 0}

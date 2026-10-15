@@ -1,7 +1,9 @@
 using BadPractice.Cursoriam.Helper.Pool;
 using Sakura.Zoo.Animal.Behaviour;
 using Sakura.Zoo.Animal.Behaviour.Prey;
+using Sakura.Zoo.UI.Label;
 using System;
+using System.Threading;
 using UnityEngine;
 using Zenject;
 using Random = UnityEngine.Random;
@@ -14,13 +16,16 @@ namespace Sakura.Zoo.Animal
         [SerializeField] private Rigidbody _rigidbody;
 
         private IAnimalBehaviour _behaviour;
+        private ILabelManager _labelManager;
         private bool _isDead;
+        private CancellationTokenSource _behaviourCts;
         private event Action<AnimalEntity> _onDeath;
 
         [Inject]
-        private void Construct(IAnimalBehaviour behaviour)
+        private void Construct(IAnimalBehaviour behaviour, ILabelManager labelManager)
         {
             _behaviour = behaviour;
+            _labelManager = labelManager;
 
             if (!_rigidbody)
             {
@@ -36,6 +41,8 @@ namespace Sakura.Zoo.Animal
         public void Die()
         {
             _isDead = true;
+            _behaviourCts?.Cancel();
+
             _onDeath?.Invoke(this);
         }
 
@@ -52,7 +59,10 @@ namespace Sakura.Zoo.Animal
             transform.position = spawnPoint.transform.position;
             transform.forward = spawnPoint.transform.forward;
 
-            _behaviour.Start(destroyCancellationToken);
+            _behaviourCts?.Cancel();
+            _behaviourCts?.Dispose();
+            _behaviourCts = CancellationTokenSource.CreateLinkedTokenSource(destroyCancellationToken);
+            _behaviour.Start(_behaviourCts.Token);
         }
 
         public void OnDespawned()
@@ -71,9 +81,14 @@ namespace Sakura.Zoo.Animal
             if (!collision.gameObject.TryGetComponent<AnimalEntity>(out var animal))
                 return;
 
+            if (animal.IsDead)
+                return;
+
             if (animal.HasBehaviour<IPreyBehaviour>())
             {
                 animal.Die();
+
+                _labelManager.Show(this);
                 return;
             }
 
@@ -81,11 +96,15 @@ namespace Sakura.Zoo.Animal
             if (chance)
             {
                 animal.Die();
+
+                _labelManager.Show(this);
                 return;
             }
 
             Die();
         }
+
+        public bool IsDead => _isDead;
 
         public Transform Transform => (this && transform) ? transform : null;
 

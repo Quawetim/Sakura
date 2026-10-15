@@ -66,7 +66,7 @@ namespace Sakura.Zoo.Animal.Behaviour.Prey
 
         private async UniTask Move(Transform transform, CancellationToken ct)
         {
-            if (_screenBoundsChecker.IsInBounds(transform.localPosition))
+            if (_screenBoundsChecker.IsInBounds(transform.position))
             {
                 if (_rotationTimeout < 0)
                 {
@@ -75,18 +75,18 @@ namespace Sakura.Zoo.Animal.Behaviour.Prey
                     if (chance)
                     {
                         var angle = Random.Range(0f, 360f);
-                        transform.localRotation = Quaternion.Euler(0f, angle, 0f);
+                        transform.rotation = Quaternion.Euler(0f, angle, 0f);
                         _rotationTimeout = _params.RotationTimeout;
                     }
                 }
             }
             else
             {
-                transform.forward = (Vector3.zero - transform.localPosition).normalized;
+                transform.forward = (Vector3.zero - transform.position).normalized;
             }
 
             _rotationTimeout -= Time.deltaTime;
-            transform.localPosition += _params.Speed * Time.deltaTime * transform.forward;
+            transform.position += _params.Speed * Time.deltaTime * transform.forward;
 
             await UniTask.NextFrame(ct);
         }
