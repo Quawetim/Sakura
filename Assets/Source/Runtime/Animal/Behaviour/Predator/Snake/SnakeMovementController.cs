@@ -1,5 +1,6 @@
 using Cysharp.Threading.Tasks;
 using Sakura.Zoo.Animal.Movement;
+using Sakura.Zoo.Helper;
 using System;
 using System.Threading;
 using UnityEngine;
@@ -7,7 +8,7 @@ using Random = UnityEngine.Random;
 
 namespace Sakura.Zoo.Animal.Behaviour.Prey
 {
-    public sealed class SnakeMovementController : IMovementController
+    public sealed class SnakeMovementController : MovementController
     {
         private readonly Params _params;
         private readonly ITransformProvider _transformProvider;
@@ -15,13 +16,14 @@ namespace Sakura.Zoo.Animal.Behaviour.Prey
         private bool _isStarted;
         private float _rotationTimeout;
 
-        public SnakeMovementController(Params @params, ITransformProvider transformProvider)
+        public SnakeMovementController(Params @params, ITransformProvider transformProvider, ScreenBoundsChecker screenBoundsChecker)
+            : base(screenBoundsChecker)
         {
             _params = @params;
             _transformProvider = transformProvider;
         }
 
-        public void Start(CancellationToken ct)
+        public override void Start(CancellationToken ct)
         {
             if (_isStarted)
                 return;
@@ -64,20 +66,27 @@ namespace Sakura.Zoo.Animal.Behaviour.Prey
 
         private async UniTask Move(Transform transform, CancellationToken ct)
         {
-            if (_rotationTimeout < 0)
+            if (_screenBoundsChecker.IsInBounds(transform.localPosition))
             {
-                var chance = Random.value < _params.RotationChance;
-
-                if (chance)
+                if (_rotationTimeout < 0)
                 {
-                    var angle = Random.Range(0f, 360f);
-                    transform.rotation = Quaternion.Euler(0f, angle, 0f);
-                    _rotationTimeout = _params.RotationTimeout;
+                    var chance = Random.value < _params.RotationChance;
+
+                    if (chance)
+                    {
+                        var angle = Random.Range(0f, 360f);
+                        transform.localRotation = Quaternion.Euler(0f, angle, 0f);
+                        _rotationTimeout = _params.RotationTimeout;
+                    }
                 }
+            }
+            else
+            {
+                transform.forward = (Vector3.zero - transform.localPosition).normalized;
             }
 
             _rotationTimeout -= Time.deltaTime;
-            transform.position += _params.Speed * Time.deltaTime * transform.forward;
+            transform.localPosition += _params.Speed * Time.deltaTime * transform.forward;
 
             await UniTask.NextFrame(ct);
         }

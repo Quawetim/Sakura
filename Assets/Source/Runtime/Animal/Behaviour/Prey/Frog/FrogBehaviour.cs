@@ -1,4 +1,5 @@
 using Sakura.Zoo.Animal.Movement;
+using System;
 
 namespace Sakura.Zoo.Animal.Behaviour.Prey
 {
@@ -7,5 +8,7 @@ namespace Sakura.Zoo.Animal.Behaviour.Prey
         public FrogBehaviour(IMovementController movementController) : base(movementController)
         {
         }
+
+        public override Type InterfaceType => typeof(IPreyBehaviour);
     }
 }

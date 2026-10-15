@@ -1,5 +1,6 @@
 using Cysharp.Threading.Tasks;
 using Sakura.Zoo.Animal.Movement;
+using Sakura.Zoo.Helper;
 using System;
 using System.Threading;
 using UnityEngine;
@@ -7,7 +8,7 @@ using Random = UnityEngine.Random;
 
 namespace Sakura.Zoo.Animal.Behaviour.Prey
 {
-    public sealed class FrogMovementController : IMovementController
+    public sealed class FrogMovementController : MovementController
     {
         private readonly Params _params;
         private readonly ITransformProvider _transformProvider;
@@ -15,14 +16,15 @@ namespace Sakura.Zoo.Animal.Behaviour.Prey
 
         private bool _isStarted;
 
-        public FrogMovementController(Params @params, ITransformProvider transformProvider, IRigidbodyProvider rigidbodyProvider)
+        public FrogMovementController(Params @params, ITransformProvider transformProvider, IRigidbodyProvider rigidbodyProvider, ScreenBoundsChecker screenBoundsChecker)
+            : base(screenBoundsChecker)
         {
             _params = @params;
             _transformProvider = transformProvider;
             _rigidbodyProvider = rigidbodyProvider;
         }
 
-        public void Start(CancellationToken ct)
+        public override void Start(CancellationToken ct)
         {
             if (_isStarted)
                 return;
@@ -67,10 +69,17 @@ namespace Sakura.Zoo.Animal.Behaviour.Prey
 
         private async UniTask Jump(Transform transform, CancellationToken ct)
         {
-            var angle = Random.Range(0f, 360f);
-            transform.rotation = Quaternion.Euler(0f, angle, 0f);
+            if (_screenBoundsChecker.IsInBounds(transform.localPosition))
+            {
+                var angle = Random.Range(0f, 360f);
+                transform.localRotation = Quaternion.Euler(0f, angle, 0f);
+            }
+            else
+            {
+                transform.forward = (Vector3.zero - transform.localPosition).normalized;
+            }
 
-            var startPosition = transform.position;
+            var startPosition = transform.localPosition;
             var targetPosition = startPosition + (_params.Distance * transform.forward);
 
             var currentTime = 0f;
@@ -82,12 +91,12 @@ namespace Sakura.Zoo.Animal.Behaviour.Prey
                 var height = _params.GetHeight(progress);
 
                 var position = Vector3.Lerp(startPosition, targetPosition, progress) + (height * transform.up);
-                transform.position = position;
+                transform.localPosition = position;
 
                 await UniTask.NextFrame(ct);
             }
 
-            transform.position = targetPosition;
+            transform.localPosition = targetPosition;
         }
 
         private void JumpRb()

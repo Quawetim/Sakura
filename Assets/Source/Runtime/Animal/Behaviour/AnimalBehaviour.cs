@@ -1,4 +1,5 @@
 using Sakura.Zoo.Animal.Movement;
+using System;
 using System.Threading;
 
 namespace Sakura.Zoo.Animal.Behaviour
@@ -16,5 +17,7 @@ namespace Sakura.Zoo.Animal.Behaviour
         {
             _movementController.Start(ct);
         }
+
+        public abstract Type InterfaceType { get; }
     }
 }

@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8767859667796976709}
   - component: {fileID: 1852836280071963224}
+  - component: {fileID: 7021868907264675819}
   m_Layer: 0
   m_Name: SceneContext
   m_TagString: Untagged
@@ -44,8 +45,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89715ad69b973a14899afa2c6730b30b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Zenject::Zenject.SceneContext
-  _scriptableObjectInstallers: []
-  _monoInstallers: []
+  _scriptableObjectInstallers:
+  - {fileID: 11400000, guid: cb3e5ccd4bf054947b53d89e2c32e9cf, type: 2}
+  _monoInstallers:
+  - {fileID: 7021868907264675819}
   _installerPrefabs: []
   _findSiblingMonoInstallers: 0
   _autoRun: 1
@@ -64,3 +67,16 @@ MonoBehaviour:
   _parentNewObjectsUnderSceneContext: 0
   _contractNames: []
   _parentContractNames: []
+--- !u!114 &7021868907264675819
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6518122997090148166}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d6d621cd00d8b5540af645f7e8258988, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Sakura.Zoo::Sakura.Zoo.SceneInstaller
+  _spawnPoints: []
